@@ -27,7 +27,7 @@ var questionslayer;
 
 	function getQuestions(){
 		client = new XMLHttpRequest();
-		client.open('GET','http://developer.cege.ucl.ac.uk:30281/getGeoJSON/questions/geom');
+		client.open('GET','http://developer.cege.ucl.ac.uk:30281/getQuestion');
 		client.onreadystatechange = questionsResponse;
 		client.send();
 	}
@@ -43,7 +43,7 @@ var questionslayer;
 				//convert the text to JSON
 				var questionsjson = JSON.parse(questionsdata);				
 				questionslayer = L.geoJson(questionsjson,{
-				pointToLayer: questioncoords				
+				pointToLayer: questioncoords
 				})
 			}
 	
@@ -60,11 +60,12 @@ var questionslayer;
 		var distance = calculateDistance(lat,lng, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
 		feature.properties.distance = distance
 		if (feature.properties.distance < 0.5) {
-			return L.marker(latlng, {icon:testMarkerPink}).addTo(mymap.panTo(latlng)).bindPopup(distance.toString());
-		}else{
-			return L.marker(latlng, {icon:testMarkerRed}).addTo(mymap.panTo(latlng)).bindPopup(distance.toString());
+			return L.marker(latlng, {icon:testMarkerPink}).addTo(mymap.panTo(latlng,22)).bindPopup(distance.toString());
 		}
+		mymap.fitBounds(latlng);
+		
 	}
+	
 	
 	
 //track user location on the map
