@@ -3,39 +3,7 @@ var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 		// load the tiles
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {maxZoom: 18,attribution: 'Map data &copy; <ahref="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' +'Imagery © <a href="http://mapbox.com">Mapbox</a>',id: 'mapbox.streets'}).addTo(mymap);
 
-//track user location
-function trackLocation() {
-if (navigator.geolocation) {
-	navigator.geolocation.watchPosition(showPosition);
-} else {
-	document.getElementById('showLocation').innerHTML = "Geolocation is not supported by this browser.";
-	}
-}
-var marker;
-function showPosition(position) {
-	  if (marker) { // check
-        mymap.removeLayer(marker); // remove
-    }
-	marker = new L.marker([position.coords.latitude, position.coords.longitude]).addTo(mymap);
-	marker
-	mymap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude), 18)
 
-}
-
-function showPosition(position) {
-	var lat = 51.524616;
-	var lng = -0.13818;
-	var distance = calculateDistance(position.coords.latitude, position.coords.longitude, lat,lng, 'K');
-	var LocDist = "<dd>" + position.coords.latitude.toString()+"," +position.coords.longitude.toString() + "</dd>"+ "Distance from Warren Street:  "+distance+"  kms";
-	L.marker([position.coords.latitude, position.coords.longitude]).addTo(mymap).bindPopup(LocDist).openPopup();
-	mymap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude), 13)
-	if (distance < 4) {
-	alert('user is within 4 kms from Warren Street');
-	}
-	else {
-	alert ('user is 4 kms away from Warren Street');
-	}
-}
 
 //calculate distance function
 function calculateDistance(lat1, lon1, lat2, lon2, unit) {
@@ -55,26 +23,64 @@ if (unit=="N") { dist = dist * 0.8684 ;} // convert miles to nautical miles
 return dist;
 }
 
-// var formlayer;
-	// function getForm(){
-		// client = new XMLHttpRequest();
-		// client.open('GET','http://developer.cege.ucl.ac.uk:30281/getGeoJSON/formdata/geom');
-		// client.onreadystatechange = formResponse;
-		// client.send();
-	// }
+//get coordinate from question point
+var questionslayer;
+var qlat = [];
+var qlng = [];
+	function getQuestions(){
+		client = new XMLHttpRequest();
+		client.open('GET','http://developer.cege.ucl.ac.uk:30281/getGeoJSON/questions/geom');
+		client.onreadystatechange = questionsResponse;
+		client.send();
+	}
 	
-	// function formResponse(){
-	// if(client.readyState == 4){
-		// var formdata = client.responseText;
-		// loadformlayer(formdata);
-		// }
-	// }
+	function questionsResponse(){
+	if(client.readyState == 4){
+		var questionsdata = client.responseText;
+		loadquestionslayer(questionsdata);
+		}
+	}
 
-	// function loadformlayer(formdata){
-				// convert the text to JSON
-				// var formjson = JSON.parse(formdata);
-				// add the JSON layer onto the map - it will appear using the default icons
-				// formlayer = L.geoJson(formjson).addTo(mymap);
-			// change the map zoom so that all the data is shown
-				// mymap.fitBounds(formlayer.getBounds());
-		// }
+	function loadquestionslayer(questionsdata){
+		
+				//convert the text to JSON
+				var questionsjson = JSON.parse(questionsdata);				
+				questionslayer = L.geoJson(questionsjson,{
+				pointToLayer: questioncoords ,
+				onEachFeature: questionlatlng
+				})
+				alert(qlat.toString());
+				alert(qlng.toString());
+			}
+	
+	//from point to layer
+	function questioncoords (feature , latlng){
+		return L.marker(latlng).addTo(mymap)
+	}
+	//push latitude longitude for each feature in array
+	function questionlatlng (feature, layer){
+		return qlat.push(feature.geometry.coordinates[0]),qlng.push(feature.geometry.coordinates[1]);
+	}
+	
+	
+	
+//track user location on the map
+function trackLocation() {
+if (navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(showPosition);
+	alert (distance.toString());
+} else {
+	document.getElementById('showLocation').innerHTML = "Geolocation is not supported by this browser.";
+	}
+}
+
+var marker;
+var distance = [];
+function showPosition(position) {
+	var i, j;
+	for (i = 0; i < qlat.length ; i++) {
+		distance.push(calculateDistance(position.coords.latitude, position.coords.longitude, qlat[i],qlng[i], 'K'));
+		return alert (distance.toString());
+}
+}
+			
