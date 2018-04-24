@@ -43,53 +43,45 @@ var questionslayer;
 				//convert the text to JSON
 				var questionsjson = JSON.parse(questionsdata);				
 				questionslayer = L.geoJson(questionsjson,{
-				pointToLayer: questioncoords,
-				onEachFeature: questionlatlng				
+				pointToLayer: questioncoords				
 				})
-			alert(distance.toString());
 			}
+	
+	var testMarkerPink = L.AwesomeMarkers.icon({
+			icon:'play',
+			markerColor:'pink'
+		});
 	var testMarkerRed = L.AwesomeMarkers.icon({
 			icon:'play',
 			markerColor:'red'
 		});
-		var testMarkerPink = L.AwesomeMarkers.icon({
-			icon:'play',
-			markerColor:'pink'
-		});
 	//from point to layer
 	function questioncoords (feature , latlng){
-			return L.marker(latlng, {icon:testMarkerPink}).addTo(mymap);
+		var distance = calculateDistance(lat,lng, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
+		feature.properties.distance = distance
+		if (feature.properties.distance < 0.5) {
+			return L.marker(latlng, {icon:testMarkerPink}).addTo(mymap.panTo(latlng)).bindPopup(distance.toString());
+		}else{
+			return L.marker(latlng, {icon:testMarkerRed}).addTo(mymap.panTo(latlng)).bindPopup(distance.toString());
 		}
-		
-	
-	
-	var distance = [];
-
-	function questionlatlng (feature, layer){
-		navigator.geolocation.getCurrentPosition(function (position){
-			return distance.push(calculateDistance(position.coords.longitude, position.coords.latitude, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K'));
-		});
-			return distance
 	}
 	
 	
 //track user location on the map
-// function trackLocation() {
-// if (navigator.geolocation) {
-	// navigator.geolocation.getCurrentPosition(showPosition);
-	// alert (distance.toString());
-// } else {
-	// document.getElementById('showLocation').innerHTML = "Geolocation is not supported by this browser.";
-	// }
-// }
+function trackLocation() {
+if (navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(showPosition);
+} else {
+	document.getElementById('showLocation').innerHTML = "Geolocation is not supported by this browser.";
+	}
+}
 
-// var marker;
-// var distance = [];
-// function showPosition(position) {
-	// var i;
-	// for (i = 0; i < qlat.length ; i++) {
-		// distance.push(calculateDistance(position.coords.latitude, position.coords.longitude, qlat[i],qlng[i], 'K'));
-		// return alert (distance.toString());
-// }
-// }
+var lat;
+var lng;
+function showPosition(position) {
+	lat = position.coords.longitude;
+	lng = position.coords.latitude;
+	return lat ,lng;
+}
+
 			
