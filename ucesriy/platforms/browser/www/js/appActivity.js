@@ -23,6 +23,14 @@ if (unit=="N") { dist = dist * 0.8684 ;} // convert miles to nautical miles
 return dist;
 }
 
+
+function questionTrack(){
+	trackLocation();
+	getQuestions();
+}
+
+
+
 var questionslayer;
 
 	function getQuestions(){
@@ -56,13 +64,14 @@ var questionslayer;
 			markerColor:'red'
 		});
 	//from point to layer
+	var questionnear;
 	function questioncoords (feature , latlng){
-		var distance = calculateDistance(lat,lng, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
-		feature.properties.distance = distance
+		var distance = calculateDistance(latitude,longitude, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
+		feature.properties.distance = distance;
 		if (feature.properties.distance < 0.5) {
-			return L.marker(latlng, {icon:testMarkerPink}).addTo(mymap.panTo(latlng,22)).bindPopup(distance.toString());
+			questionnear = L.marker(latlng, {icon:testMarkerPink}).addTo(mymap.panTo(latlng,22)).bindPopup("<b>"+feature.properties.question+"</b>");
+			return questionnear
 		}
-		mymap.fitBounds(latlng);
 		
 	}
 	
@@ -77,12 +86,12 @@ if (navigator.geolocation) {
 	}
 }
 
-var lat;
-var lng;
+var latitude;
+var longitude;
 function showPosition(position) {
-	lat = position.coords.longitude;
-	lng = position.coords.latitude;
-	return lat ,lng;
+	latitude = position.coords.longitude;
+	longitude = position.coords.latitude;
+	return latitude ,longitude;
 }
 
 			
