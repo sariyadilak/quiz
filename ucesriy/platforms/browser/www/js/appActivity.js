@@ -23,14 +23,14 @@ if (unit=="N") { dist = dist * 0.8684 ;} // convert miles to nautical miles
 return dist;
 }
 
-
+//get user's location and get question
 function questionTrack(){
-	trackLocation();
-	getQuestions();
+	return trackLocation(),getQuestions();
+	
 }
 
 
-
+//get questions from database
 var questionslayer;
 
 	function getQuestions(){
@@ -55,24 +55,33 @@ var questionslayer;
 				})
 			}
 	
-	var testMarkerPink = L.AwesomeMarkers.icon({
-			icon:'play',
-			markerColor:'pink'
-		});
+	//define color marker
 	var testMarkerRed = L.AwesomeMarkers.icon({
 			icon:'play',
 			markerColor:'red'
 		});
-	//from point to layer
+		
+	//calculate question distance and popup question
 	var questionnear;
 	function questioncoords (feature , latlng){
 		var distance = calculateDistance(latitude,longitude, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
+		//add distance as one of properties
 		feature.properties.distance = distance;
+		//define question variable
+		q = feature.properties.question;
+		c_1 = feature.properties.choice_1;
+		c_2 = feature.properties.choice_2;
+		c_3 = feature.properties.choice_3;
+		c_4 = feature.properties.choice_4;
+		radio_b1 = '<input type="radio" name="amorpm" id="1" />';
+		radio_b2 = '<input type="radio" name="amorpm" id="2" />';
+		radio_b3 = '<input type="radio" name="amorpm" id="3" />';
+		radio_b4 = '<input type="radio" name="amorpm" id="4" />';
+		q_c = "<b>"+q+"</b>"+"<br />"+radio_b1+c_1+"<br />"+radio_b2+c_2+"<br />"+radio_b3+c_3+"<br />"+radio_b4+c_4+"<br />"
 		if (feature.properties.distance < 0.5) {
-			questionnear = L.marker(latlng, {icon:testMarkerPink}).addTo(mymap.panTo(latlng,22)).bindPopup("<b>"+feature.properties.question+"</b>");
+			questionnear = L.marker(latlng, {icon:testMarkerRed}).addTo(mymap.panTo(latlng,22)).bindPopup(q_c).openPopup();
 			return questionnear
 		}
-		
 	}
 	
 	
@@ -94,4 +103,11 @@ function showPosition(position) {
 	return latitude ,longitude;
 }
 
+
+//clear map
+function clearMap(){
+
+        mymap.removeLayer(questionnear); // remove
+ 
+}
 			
