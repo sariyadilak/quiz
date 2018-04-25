@@ -67,17 +67,21 @@ var questionslayer;
 		var distance = calculateDistance(latitude,longitude, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
 		//add distance as one of properties
 		feature.properties.distance = distance;
+		//user id text box
+		user_id = '<label for="id">User ID</label><input type="text" size="10" id="id"/>';
 		//define question variable
 		q = feature.properties.question;
 		c_1 = feature.properties.choice_1;
 		c_2 = feature.properties.choice_2;
 		c_3 = feature.properties.choice_3;
 		c_4 = feature.properties.choice_4;
+		//button for answer question
 		radio_b1 = '<input type="radio" name="amorpm" id="1" />';
 		radio_b2 = '<input type="radio" name="amorpm" id="2" />';
 		radio_b3 = '<input type="radio" name="amorpm" id="3" />';
 		radio_b4 = '<input type="radio" name="amorpm" id="4" />';
-		q_c = "<b>"+q+"</b>"+"<br />"+radio_b1+c_1+"<br />"+radio_b2+c_2+"<br />"+radio_b3+c_3+"<br />"+radio_b4+c_4+"<br />"
+		upload_b = '<a href="#" class="mdl-button"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">publish</i>Answer</a>';
+		q_c = user_id+"<br />"+"<b>"+q+"</b>"+"<br />"+radio_b1+c_1+"<br />"+radio_b2+c_2+"<br />"+radio_b3+c_3+"<br />"+radio_b4+c_4+"<br />"+upload_b;
 		if (feature.properties.distance < 0.5) {
 			questionnear = L.marker(latlng, {icon:testMarkerRed}).addTo(mymap.panTo(latlng,22)).bindPopup(q_c).openPopup();
 			return questionnear
