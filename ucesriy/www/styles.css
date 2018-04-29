@@ -83,13 +83,13 @@ html, body {
   margin-bottom: 20px;
 }
 .mdl-demo .mdl-card__actions {
-  margin: 0;
+  margin: 1 auto;
   padding: 4px 20px;
   color: inherit;
 }
 .mdl-demo .mdl-card__actions a {
   color: #00BCD4;
-  margin: 0;
+  margin: 1 auto;
 }
 .mdl-demo .mdl-card__actions a:hover,
 .mdl-demo .mdl-card__actions a:active {
