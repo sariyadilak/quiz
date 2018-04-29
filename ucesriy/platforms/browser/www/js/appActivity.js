@@ -25,7 +25,7 @@ return dist;
 
 //get user's location and get question
 function questionTrack(){
-	return trackLocation(),getQuestions();
+	trackLocation(),getQuestions();
 	
 }
 
@@ -60,9 +60,16 @@ var questionslayer;
 			icon:'play',
 			markerColor:'red'
 		});
+	var testMarkerGreen = L.AwesomeMarkers.icon({
+			icon:'play',
+			markerColor:'green'
+		});	
+	
 		
 	//calculate question distance and popup question
 	var questionnear;
+	var q_a_id;
+	var a;
 	function questioncoords (feature , latlng){
 		var distance = calculateDistance(latitude,longitude, feature.geometry.coordinates[0],feature.geometry.coordinates[1], 'K');
 		//add distance as one of properties
@@ -70,26 +77,63 @@ var questionslayer;
 		//user id text box
 		user_id = '<label for="user_id">User ID:</label><input type="text" size="10" id="user_id"/>';
 		//define question variable
+		q_id = feature.properties.id;
 		q = feature.properties.question;
 		c_1 = feature.properties.choice_1;
 		c_2 = feature.properties.choice_2;
 		c_3 = feature.properties.choice_3;
 		c_4 = feature.properties.choice_4;
+		answer = feature.properties.answer;
 		//button for answer question
 		radio_b1 = '<input type="radio" name="amorpm" id="1" />';
 		radio_b2 = '<input type="radio" name="amorpm" id="2" />';
 		radio_b3 = '<input type="radio" name="amorpm" id="3" />';
 		radio_b4 = '<input type="radio" name="amorpm" id="4" />';
-		upload_b = '<a href="#" class="mdl-button"onclick="startDataUpload();return"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">publish</i>Answer</a>';
+		upload_b = '<a href="#" class="mdl-button"onclick="checkResult();return"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">publish</i>Answer</a>';
 		upload_r = '<div id="dataUploadResult">Upload Result</div>'
-		q_c = user_id+"<br />"+"<b>"+q+"</b>"+"<br />"+radio_b1+c_1+"<br />"+radio_b2+c_2+"<br />"+radio_b3+c_3+"<br />"+radio_b4+c_4+"<br />"+upload_b+"<br />"+upload_r;
+		answer_r = '<div id="answerResult">Answer Result</div>'
+		q_c = user_id+"<br />"+"<b>"+q+"</b>"+"<br />"+radio_b1+c_1+"<br />"+radio_b2+c_2+"<br />"+radio_b3+c_3+"<br />"+radio_b4+c_4+"<br />"+upload_b+"<br />"+upload_r+"<br />"+answer_r;
 		if (feature.properties.distance < 0.5) {
-			questionnear = L.marker(latlng, {icon:testMarkerRed}).addTo(mymap.panTo(latlng,22)).bindPopup(q_c).openPopup();
-			return questionnear
+			q_a_id = q_id;
+			a = answer;
+			questionnear = L.marker(latlng).addTo(mymap.panTo(latlng,22)).bindPopup(q_c).openPopup();	
 		}
+		}
+		
+	function checkResult(){
+	startDataUpload(),processResult();
+	
 	}
 	
-	
+	var user_answer;
+	function processResult(){
+		if (document.getElementById("1").checked) {
+ 		 user_answer = 1;
+		}
+		if (document.getElementById("2").checked) {
+		user_answer = 2;
+		}
+		if (document.getElementById("3").checked) {
+		user_answer = 3;
+		}
+		if (document.getElementById("4").checked) {
+		user_answer = 4;
+		}
+		if (user_answer === a) {
+			return	alert ("correct answer");
+		}else{
+			return alert("wrong answer");
+		}
+	}
+	// var user_answer;
+			// feature.properties.useranswer = user_answer;
+			// u_answer = feature.properties.useranswer;
+			// function answerResulted (){
+				// if(u_answer === a){
+			// document.getElementById("answerResult").innerHTML = "correct answer" ;
+			// }else{
+			// document.getElementById("answerResult").innerHTML = "wrong answer" ;
+			// }
 	
 //track user location on the map
 function trackLocation() {

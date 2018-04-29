@@ -18,7 +18,7 @@ function startDataUpload() {
 	if (document.getElementById("4").checked) {
  		 postString=postString+"&user_answer="+4;
 	}
-	
+	postString = postString+"&questionid="+q_a_id
 processData(postString);
 }
 
