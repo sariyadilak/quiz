@@ -1,4 +1,10 @@
-
+/*
+*    Title: week6formcode
+*    Author:Ellul,C
+*    Date: 20/04/2018
+*    Availability: https://github.com/claireellul/cegeg077-week6formcode/blob/master/ucfscde/www/js/uploadData.js
+*
+*/
 
 	function startDataUpload() {
 		alert ("start data upload");
@@ -18,12 +24,14 @@
 		if (document.getElementById("4").checked) {
 			 postString=postString+"&user_answer="+4;
 		}
+		//get the question id value (foreign key)
 		postString = postString+"&questionid="+q_a_id
 	processData(postString);
 	}
 
 	var client;
-
+	
+	//post the user answer to http server
 	function processData(postString) {
 	   client = new XMLHttpRequest();
 	   client.open('POST','http://developer.cege.ucl.ac.uk:30281/uploadUseranswer',true);

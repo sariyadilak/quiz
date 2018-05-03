@@ -3,8 +3,12 @@
 			// load the tiles
 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {maxZoom: 18,attribution: 'Map data &copy; <ahref="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' +'Imagery © <a href="http://mapbox.com">Mapbox</a>',id: 'mapbox.streets'}).addTo(mymap);
 
-
-
+	/*
+	*    Title: Calculate the Distance between Two Points in your Web Apps
+	*    Author:Gravelle,R 
+	*    Availability: https://www.htmlgoodies.com/beyond/javascript/calculate-the-distance-between-two-points-in-your-web-apps.html
+	*
+	*/
 	//calculate distance function
 	function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	var radlat1 = Math.PI * lat1/180;
@@ -45,7 +49,7 @@
 		loadquestionslayer(questionsdata);
 		}
 	}
-
+	//process GeoJSON data
 	function loadquestionslayer(questionsdata){
 				//convert the text to JSON
 				var questionsjson = JSON.parse(questionsdata);				
@@ -57,17 +61,19 @@
 	
 	
 		
-	//calculate question distance and popup question
+	//The below function will pop up nearby question, upload user id, user answer
 	var questionnear;
-	var q_a_id;
-	var a;
+	var q_a_id; //define variable to hold id of question. This will upload to database as foreign key.
+	var a; //define variable for the answer of the question
+	//extract latitude and longitude form GEOJSON
 	function questioncoords (feature , latlng){
+		//calculate question distance and popup question
 		var distance = calculateDistance(latitude,longitude, feature.geometry.coordinates[1],feature.geometry.coordinates[0], 'K');
 		//add distance as one of properties
 		feature.properties.distance = distance;
 		//user id text box
 		user_id = '<label for="user_id">User ID:</label><input type="text" size="10" id="user_id"/>';
-		//define question id, question, choice and answer variable
+		//define question id, question, choices and answer variable
 		q_id = feature.properties.id;
 		q = feature.properties.question;
 		c_1 = feature.properties.choice_1;
@@ -85,10 +91,11 @@
 		upload_r = '<div id="dataUploadResult">Upload Result</div>'
 		//information in popup
 		q_c = user_id+"<br />"+"<b>"+q+"</b>"+"<br />"+radio_b1+c_1+"<br />"+radio_b2+c_2+"<br />"+radio_b3+c_3+"<br />"+radio_b4+c_4+"<br />"+upload_b+"<br />"+upload_r+"<br />";
+		//if distance between question and user's location less than 500 meters pop up the question
 		if (feature.properties.distance < 0.5) {
-			q_a_id = q_id;
-			a = answer;
-			questionnear = L.marker(latlng).addTo(mymap.panTo(latlng,22)).bindPopup(q_c).openPopup();	
+			q_a_id = q_id;	//define id of the question that is less than 500 meters from  user's location
+			a = answer;		//define answer of the question that is less than 500 meters from  user's location
+			questionnear = L.marker(latlng).addTo(mymap.panTo(latlng,22)).bindPopup(q_c).openPopup();	//pop up the question
 		}
 		}
 	
@@ -97,9 +104,10 @@
 	startDataUpload(),processResult();
 	}
 	
-	//process the result that user answer
+	//The below function will process the result that user answer and compute that it is correct or wrong, and tell the correct answer.
 	var user_answer;
 	function processResult(){
+		//get the value of user answer and define the user answer variable
 		if (document.getElementById("1").checked) {
  		 user_answer = 1;
 		}
@@ -112,10 +120,11 @@
 		if (document.getElementById("4").checked) {
 		user_answer = 4;
 		}
+		//if the user answer equal to the answer of the question, it means that it is correct answer
 		if (user_answer === a) {
 			return	alert ("correct answer");
 		}else{
-			return alert("wrong answer. The answer is choice "+a);
+			return alert("wrong answer. The answer is choice "+a); //if not alert that it is wrong answer, and tell the correct choice.
 		}
 	}
 
