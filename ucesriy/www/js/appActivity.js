@@ -115,7 +115,7 @@
 		if (user_answer === a) {
 			return	alert ("correct answer");
 		}else{
-			return alert("wrong answer");
+			return alert("wrong answer. The answer is choice "+a);
 		}
 	}
 
